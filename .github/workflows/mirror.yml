@@ -9,6 +9,9 @@ jobs:
     strategy:
       matrix:
         repo:
+          - coop
+          - coop-integration-example
+          - osprey
           - playground
     steps:
       - uses: actions/checkout@v6
