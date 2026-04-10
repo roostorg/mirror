@@ -9,6 +9,7 @@ jobs:
     strategy:
       matrix:
         repo:
+          - awesome-safety-tools
           - coop
           - coop-integration-example
           - osprey
