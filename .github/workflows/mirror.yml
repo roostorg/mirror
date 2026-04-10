@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
         with:
-          repository: ${{ matrix.repo }}
+          repository: roostorg/${{ matrix.repo }}
           fetch-depth: 0
       - name: Push to GitLab
         run: |
