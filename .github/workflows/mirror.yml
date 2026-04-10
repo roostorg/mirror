@@ -1,0 +1,22 @@
+name: Mirror
+on: 
+  schedule:
+    - cron: '0 */1 * * *'
+  workflow_dispatch:
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        repo:
+          - playground
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          repository: ${{ matrix.repo }}
+          fetch-depth: 0
+      - name: Push to GitLab
+        run: |
+          git remote remove gitlab 2>/dev/null || true
+          git remote add gitlab https://oauth2:${{ secrets.GITLAB_TOKEN }}@gitlab.com/roostorg/${{ matrix.repo }}.git
+          git push --force --prune gitlab +refs/heads/*:refs/heads/* +refs/tags/*:refs/tags/*
