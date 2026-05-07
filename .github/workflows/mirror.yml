@@ -22,13 +22,18 @@ jobs:
         with:
           repository: roostorg/${{ matrix.repo }}
           fetch-depth: 0
+      - uses: actions/checkout@v6
+        with:
+          repository: roostorg/mirror
+          ref: ${{ github.sha }}
+          path: .mirror-action
       - name: Mirror to GitLab
-        uses: roostorg/mirror@${{ github.sha }}
+        uses: ./.mirror-action
         with:
           destination: https://gitlab.com/roostorg/${{ matrix.repo }}.git
           token: ${{ secrets.GITLAB_TOKEN }}
       - name: Mirror to Tangled
-        uses: roostorg/mirror@${{ github.sha }}
+        uses: ./.mirror-action
         with:
           destination: git@tangled.org:roost.tools/${{ matrix.repo }}
           ssh_private_key: ${{ secrets.TANGLED_SSH_PRIVATE_KEY }}
