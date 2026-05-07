@@ -40,7 +40,7 @@ The action mirrors all branches and tags, pruning any that no longer exist in th
 
 ### Forge examples
 
-**GitLab** — HTTPS with OAuth2 token (default `token_username` of `oauth2` is correct):
+**GitLab**: HTTPS with OAuth2 token (default `token_username` of `oauth2` is correct):
 ```yaml
 - uses: roostorg/mirror@main
   with:
@@ -48,7 +48,7 @@ The action mirrors all branches and tags, pruning any that no longer exist in th
     token: ${{ secrets.GITLAB_TOKEN }}
 ```
 
-**Tangled** — SSH with ED25519 key:
+**Tangled**: SSH with ED25519 key:
 ```yaml
 - uses: roostorg/mirror@main
   with:
@@ -57,7 +57,7 @@ The action mirrors all branches and tags, pruning any that no longer exist in th
     ssh_known_hosts: ${{ secrets.TANGLED_KNOWN_HOSTS }}
 ```
 
-**Codeberg** — HTTPS with a Codeberg username and token:
+**Codeberg**: HTTPS with a Codeberg username and token:
 ```yaml
 - uses: roostorg/mirror@main
   with:
@@ -66,7 +66,7 @@ The action mirrors all branches and tags, pruning any that no longer exist in th
     token_username: your-username
 ```
 
-**Gitea / Forgejo** — HTTPS with account username and token:
+**Gitea / Forgejo**: HTTPS with account username and token:
 ```yaml
 - uses: roostorg/mirror@main
   with:
@@ -91,12 +91,12 @@ Providing this value means the action verifies the host's identity at push time.
 - SSH private keys are written to `$RUNNER_TEMP` (not `~/.ssh`) with `chmod 600` and deleted immediately after the push.
 - `IdentitiesOnly=yes` prevents the SSH agent from offering other keys during the push.
 - `StrictHostKeyChecking=yes` ensures the action hard-fails if the host key doesn't match, rather than silently connecting.
-- Only the git repository (branches, tags, and commits) is mirrored — pull requests and issues are not.
+- Only the git repository (branches, tags, and commits) is mirrored; pull requests and issues are not.
 - **Do not mirror private repositories.** The action does not check repo visibility.
 
 ## How ROOST uses this
 
-ROOST maintains a [mirror workflow](.github/workflows/mirror.yml) in this repo that runs hourly and on push to `main`. It checks out each repo in a matrix, then calls this action twice — once for GitLab, once for Tangled.
+ROOST maintains a [mirror workflow](.github/workflows/mirror.yml) in this repo that runs hourly and on push to `main`. It checks out each repo in a matrix, then calls this action twice; once for GitLab, once for Tangled.
 
 To add a ROOST repo to the mirror:
 
