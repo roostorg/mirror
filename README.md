@@ -1,32 +1,39 @@
 # mirror
 
-A GitHub Action for mirroring a git repository to any git forge, plus a workflow that uses it to keep ROOST's repos in sync.
+GitHub Action to mirror a repo to any git forge
 
 ## Usage
 
-After checking out your repo with `fetch-depth: 0`, call this action once per destination forge:
+This action mirrors all branches and tags, pruning any that no longer exist in the source.
 
-```yaml
-- uses: actions/checkout@v6
-  with:
-    repository: your-org/your-repo
-    fetch-depth: 0
+> [!WARNING]
+> Mirrors should be treated as read-only; there is no two-way sync. Issues and pull requests are also not mirrored.
 
-- name: Mirror to GitLab
-  uses: roostorg/mirror@main
-  with:
-    destination: https://gitlab.com/your-org/your-repo.git
-    token: ${{ secrets.GITLAB_TOKEN }}
+1. **Create a destination**: an empty repository on your desired forge(s) (e.g. GitLab, Tangled, Codeberg)
+2. **Prepare authentication**: either a personal access token (e.g. for GitLab) or SSH key (e.g. for Tangled)
+3. **Add this action to your repo**: after checking out with `fetch-depth: 0`, call the action once per destination:
 
-- name: Mirror to Tangled
-  uses: roostorg/mirror@main
-  with:
-    destination: git@tangled.org:your-handle/your-repo
-    ssh_private_key: ${{ secrets.TANGLED_SSH_PRIVATE_KEY }}
-    ssh_known_hosts: ${{ secrets.TANGLED_KNOWN_HOSTS }}
-```
+    ```yaml
+    - uses: actions/checkout@v6
+      with:
+        repository: your-org/your-repo
+        fetch-depth: 0
+    
+    - name: Mirror to GitLab
+      uses: roostorg/mirror@main
+      with:
+        destination: https://gitlab.com/your-org/your-repo.git
+        token: ${{ secrets.GITLAB_TOKEN }}
+    
+    - name: Mirror to Tangled
+      uses: roostorg/mirror@main
+      with:
+        destination: git@tangled.org:your-handle/your-repo
+        ssh_private_key: ${{ secrets.TANGLED_SSH_PRIVATE_KEY }}
+        ssh_known_hosts: ${{ secrets.TANGLED_KNOWN_HOSTS }}
+    ```
 
-The action mirrors all branches and tags, pruning any that no longer exist in the source. Mirrors should be treated as read-only; there is no two-way sync.
+See the [examples](#examples) below for specific forge configuration, or see [how ROOST uses this](#how-roost-uses-this).
 
 ### Inputs
 
@@ -38,7 +45,7 @@ The action mirrors all branches and tags, pruning any that no longer exist in th
 | `ssh_private_key` | for SSH | — | PEM private key (ED25519 or RSA). Written to a temp file with mode 0600 and deleted after the push. |
 | `ssh_known_hosts` | recommended | — | Known-hosts entries for the destination host (see below). If omitted, falls back to `ssh-keyscan` with a TOFU warning. |
 
-### Forge examples
+### Examples
 
 **GitLab**: HTTPS with OAuth2 token (default `token_username` of `oauth2` is correct):
 ```yaml
@@ -96,9 +103,9 @@ Providing this value means the action verifies the host's identity at push time.
 
 ## How ROOST uses this
 
-ROOST maintains a [mirror workflow](.github/workflows/mirror.yml) in this repo that runs hourly and on push to `main`. It checks out each repo in a matrix, then calls this action twice; once for GitLab, once for Tangled.
+ROOST maintains a [mirror workflow](.github/workflows/mirror.yml) in this repo that runs hourly and on push to `main`. It checks out each repo in a matrix, then calls this action once for each remote.
 
-To add a ROOST repo to the mirror:
+To add a ROOST repo to our mirrors:
 
 1. Create an empty repo of the same name on each forge (e.g. [gitlab.com/roostorg](https://gitlab.com/roostorg/))
 2. Add the repo name to the `repo` matrix in [.github/workflows/mirror.yml](.github/workflows/mirror.yml)
