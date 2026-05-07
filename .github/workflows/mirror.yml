@@ -27,12 +27,22 @@ jobs:
           repository: roostorg/mirror
           ref: ${{ github.sha }}
           path: .mirror-action
-      - name: Mirror to GitLab
+
+      - name: Codeberg
+        uses: ./.mirror-action
+        with:
+          # There's something weird with Codeberg repo names; appending `-mirror` for now
+          destination: https://codeberg.org/roostorg/${{ matrix.repo }}-mirror.git
+          token: ${{ secrets.CODEBERG_TOKEN }}
+          token_username: ${{ secrets.CODEBERG_USERNAME }}
+
+      - name: GitLab
         uses: ./.mirror-action
         with:
           destination: https://gitlab.com/roostorg/${{ matrix.repo }}.git
           token: ${{ secrets.GITLAB_TOKEN }}
-      - name: Mirror to Tangled
+
+      - name: Tangled
         uses: ./.mirror-action
         with:
           destination: git@tangled.org:roost.tools/${{ matrix.repo }}
