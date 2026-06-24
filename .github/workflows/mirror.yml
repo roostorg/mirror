@@ -12,7 +12,9 @@ jobs:
     strategy:
       matrix:
         repo:
+          # Make sure an empty repo exists on all remote mirrors before adding here! 
           - awesome-safety-tools
+          - community
           - coop
           - coop-integration-example
           - osprey
