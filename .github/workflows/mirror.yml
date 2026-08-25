@@ -20,17 +20,26 @@ jobs:
           - osprey
           - playground
     steps:
-      - uses: actions/checkout@v6
+      - name: Stats
+        uses: jgehrcke/github-repo-stats@306db38ad131cab2aa5f2cd3062bf6f8aa78c1aa # 1.4.2
+        with:
+          repository: roostorg/${{ matrix.repo }}
+          ghtoken: ${{ secrets.ghrs_github_api_token }}
+
+      - name: Checkout
+        uses: actions/checkout@v6
         with:
           repository: roostorg/${{ matrix.repo }}
           fetch-depth: 0
-      - uses: actions/checkout@v6
+
+      - name: Checkout mirror action
+        uses: actions/checkout@v6
         with:
           repository: roostorg/mirror
           ref: ${{ github.sha }}
           path: .mirror-action
 
-      - name: Codeberg
+      - name: Mirror to Codeberg
         uses: ./.mirror-action
         with:
           # There's something weird with Codeberg repo names; appending `-mirror` for now
@@ -38,13 +47,13 @@ jobs:
           token: ${{ secrets.CODEBERG_TOKEN }}
           token_username: ${{ secrets.CODEBERG_USERNAME }}
 
-      - name: GitLab
+      - name: Mirror to GitLab
         uses: ./.mirror-action
         with:
           destination: https://gitlab.com/roostorg/${{ matrix.repo }}.git
           token: ${{ secrets.GITLAB_TOKEN }}
 
-      - name: Tangled
+      - name: Mirror to Tangled
         uses: ./.mirror-action
         with:
           destination: git@tangled.org:roost.tools/${{ matrix.repo }}
